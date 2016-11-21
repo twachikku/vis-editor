@@ -152,7 +152,7 @@ public enum SceneFeature {
 	SPRITE_RENDER_SYSTEM(new SystemProvider() {
 		@Override
 		public BaseSystem create (EntityEngineConfiguration config, RuntimeContext context, SceneData data) {
-			return new SpriteRenderSystem(config.getSystem(RenderBatchingSystem.class));
+			return new SpriteRenderSystem(config.getSystem(RenderBatchingSystem.class),data.pixelsPerUnit);
 		}
 	}),
 

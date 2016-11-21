@@ -19,9 +19,11 @@ package com.kotcrab.vis.runtime.system.render;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Rectangle;
 import com.kotcrab.vis.runtime.component.Invisible;
 import com.kotcrab.vis.runtime.component.Origin;
 import com.kotcrab.vis.runtime.component.Transform;
+import com.kotcrab.vis.runtime.component.VisNinePatch;
 import com.kotcrab.vis.runtime.component.VisSprite;
 import com.kotcrab.vis.runtime.system.delegate.DeferredEntityProcessingSystem;
 import com.kotcrab.vis.runtime.system.delegate.EntityProcessPrincipal;
@@ -34,12 +36,15 @@ public class SpriteRenderSystem extends DeferredEntityProcessingSystem {
 	private ComponentMapper<VisSprite> spriteCm;
 	private ComponentMapper<Transform> transformCm;
 	private ComponentMapper<Origin> originCm;
+	private ComponentMapper<VisNinePatch> nineCm;
 
 	private RenderBatchingSystem renderSystem;
 	private Batch batch;
+	private float pixelsPerUnit;
 
-	public SpriteRenderSystem (EntityProcessPrincipal principal) {
+	public SpriteRenderSystem (EntityProcessPrincipal principal, float pixelsPerUnit) {
 		super(Aspect.all(VisSprite.class).exclude(Invisible.class), principal);
+		this.pixelsPerUnit = pixelsPerUnit;
 	}
 
 	@Override
@@ -52,8 +57,18 @@ public class SpriteRenderSystem extends DeferredEntityProcessingSystem {
 		VisSprite sprite = spriteCm.get(entityId);
 		Transform transform = transformCm.get(entityId);
 		Origin origin = originCm.get(entityId);
-
-		batch.draw(sprite.getRegion(), transform.getX(), transform.getY(), origin.getOriginX(), origin.getOriginY(),
-				sprite.getWidth(), sprite.getHeight(), transform.getScaleX(), transform.getScaleY(), transform.getRotation());
+		VisNinePatch nine = nineCm.get(entityId);
+		if(nine!=null && (nine.getLeft()!=0 || nine.getRight()!=0 || nine.getTop()!=0 || nine.getBottom()!=0) ){
+			if(nine.isDirty()){
+				nine.setTexture(sprite.getBaseRegion(),pixelsPerUnit);
+				nine.setDirty(false);
+				
+			}
+			Rectangle bound = nine.getBoundingRectangle(transform, origin);
+			nine.getNinePatch().draw(batch,bound.x,bound.y,bound.width/pixelsPerUnit,bound.height/pixelsPerUnit);
+		}else{
+		   batch.draw(sprite.getRegion(),transform.getX(), transform.getY(), origin.getOriginX(), origin.getOriginY(),
+			  	  sprite.getWidth(), sprite.getHeight(), transform.getScaleX(), transform.getScaleY(), transform.getRotation());
+		}
 	}
 }

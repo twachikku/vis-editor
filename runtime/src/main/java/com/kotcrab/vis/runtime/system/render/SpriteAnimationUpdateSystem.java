@@ -63,11 +63,11 @@ public class SpriteAnimationUpdateSystem extends DeferredEntityProcessingSystem 
 		if (spriteAnim.isDirty()) {
 			if (assetRef.asset instanceof TextureRegionAsset) {
 				spriteAnim.setAnimation(new Animation(spriteAnim.getFrameDuration(), getSpriteSheet(sprite, spriteAnim)));
-				spriteAnim.setPlaying(true);
 			} else {
 				spriteAnim.setAnimation(new Animation(spriteAnim.getFrameDuration(),
 					getSpriteSheetHelper(assetRef).getAnimationRegions(spriteAnim.getAnimationName())));
 			}
+			spriteAnim.setDirty(false);
 		}
 
 		if (spriteAnim.isPlaying()) {

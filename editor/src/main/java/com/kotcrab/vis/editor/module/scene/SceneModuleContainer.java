@@ -133,7 +133,7 @@ public class SceneModuleContainer extends ModuleContainer<SceneModule> implement
 
 
 		//common render systems
-		config.setSystem(new SpriteRenderSystem(batchingSystem), VIS_RENDERER);
+		config.setSystem(new SpriteRenderSystem(batchingSystem, scene.pixelsPerUnit), VIS_RENDERER);
 		config.setSystem(new TextRenderSystem(batchingSystem, Assets.getDistanceFieldShader()), VIS_RENDERER);
 		config.setSystem(new ParticleRenderSystem(batchingSystem, true), VIS_RENDERER);
 
