@@ -20,12 +20,15 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.kotcrab.vis.runtime.RuntimeConfiguration;
 import com.kotcrab.vis.runtime.font.FontProvider;
 import com.kotcrab.vis.runtime.font.FreeTypeFontProvider;
 import com.kotcrab.vis.runtime.plugin.EntitySupport;
 import com.kotcrab.vis.runtime.scene.SceneLoader.SceneParameter;
+import com.kotcrab.vis.runtime.util.PathUtils;
 import com.kotcrab.vis.runtime.util.ShaderLoader;
 
 /**
@@ -35,6 +38,8 @@ import com.kotcrab.vis.runtime.util.ShaderLoader;
  */
 public class VisAssetManager extends AssetManager {
 	private SceneLoader sceneLoader;
+
+	private TextureAtlas sceneTextureAtlas;
 
 	public VisAssetManager (Batch batch) {
 		this(new InternalFileHandleResolver(), batch);
@@ -80,6 +85,14 @@ public class VisAssetManager extends AssetManager {
 		Scene scene = get(scenePath, Scene.class);
 		scene.init();
 		return scene;
+	}
+
+	/** For getting Texture from TextureAtlas */
+	public TextureRegion getTexture (String fileName) {
+		if (sceneTextureAtlas == null) {
+			sceneTextureAtlas = get(sceneLoader.getData().textureAtlasPath, TextureAtlas.class);
+		}
+		return sceneTextureAtlas.findRegion(PathUtils.removeExtension(fileName));
 	}
 
 }

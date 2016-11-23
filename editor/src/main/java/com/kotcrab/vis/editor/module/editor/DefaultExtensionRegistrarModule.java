@@ -88,10 +88,14 @@ public class DefaultExtensionRegistrarModule extends EditorModule {
 		compTableReg.accept(sceneMC -> new AutoComponentTable<>(sceneMC, VisParticle.class, false));
 		compTableReg.accept(sceneMC -> new TextPropertiesComponentTable(sceneMC));
 
+		compTableReg.accept(sceneMC -> new AutoComponentTable<>(sceneMC, VisNinePatch.class, true));
+
 		Consumer<UserAddableComponentProvider> userAddCompReg = provider -> extensionStorage.addUserAddableComponentProvider(provider);
 		userAddCompReg.accept(() -> Shader.class);
 		userAddCompReg.accept(() -> VisPolygon.class);
 		userAddCompReg.accept(() -> PhysicsProperties.class);
 		userAddCompReg.accept(() -> Variables.class);
+
+		userAddCompReg.accept(() -> VisNinePatch.class);
 	}
 }
